@@ -122,8 +122,8 @@ void FacePicMsgCallback(const face_plate_msgs::Face_pic::ConstPtr &msg)
 
 	pub_face_pic_message_.publish(face_msg);
 
-	//	cv::Point origin(faces.info[i].face_box.x1, faces.info[i].face_box.y1 - 60);
-	//	Add_text_to_pic(frame, text, origin);
+//	cv::Point origin(faces.info[i].face_box.x1, faces.info[i].face_box.y1 - 60);
+//	Add_text_to_pic(frame, text, origin);
 #if 0
 	sensor_msgs::ImagePtr img_msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", frame).toImageMsg();
 	pub_image_.publish(img_msg);
