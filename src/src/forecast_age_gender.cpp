@@ -100,29 +100,31 @@ void FacePicMsgCallback(const face_plate_msgs::Face_pic::ConstPtr &msg)
 	memcpy(data, (char *)frame.data, w * h * 3);
 	facesdk_readModelFromFile(ModelType::Detect, model_detect_.c_str(), ImageFormat::RGB);
 	sdkFaces faces = facesdk_detect(data);
-	//	std::cout << "faces:" << faces.face_count << std::endl;
 
 	facesdk_readModelFromFile(ModelType::Attribution, model_attribution_.c_str(), ImageFormat::RGB);
 	sdkFaces faces3 = facesdk_attribute();
 	std::string text;
 
-	if(faces3.info[0].attribution.gender == 0)
+	if(faces3.face_count > 0)
 	{
-		text = std::string("年龄：") + std::to_string(faces3.info[0].attribution.age) + std::string(" 性别： M");
-		face_msg.sex = 1;
+		if(faces3.info[0].attribution.gender == 0)
+		{
+			text = std::string("年龄：") + std::to_string(faces3.info[0].attribution.age) + std::string(" 性别： M");
+			face_msg.sex = 1;
+		}
+		else if(faces3.info[0].attribution.gender == 1)
+		{
+			text = std::string("年龄：") + std::to_string(faces3.info[0].attribution.age) + std::string(" 性别： W");
+			face_msg.sex = 2;
+		}
+
+		face_msg.age = int(faces3.info[0].attribution.age);
+		std::cout << text << std::endl;
+
+		pub_face_pic_message_.publish(face_msg);
 	}
-	else if(faces3.info[0].attribution.gender == 1)
-	{
-		text = std::string("年龄：") + std::to_string(faces3.info[0].attribution.age) + std::string(" 性别： W");
-		face_msg.sex = 2;
-	}
 
-	face_msg.age = int(faces3.info[0].attribution.age);
-	std::cout << text << std::endl;
-
-	pub_face_pic_message_.publish(face_msg);
-
-//	cv::Point origin(faces.info[i].face_box.x1, faces.info[i].face_box.y1 - 60);
+	//	cv::Point origin(faces.info[i].face_box.x1, faces.info[i].face_box.y1 - 60);
 //	Add_text_to_pic(frame, text, origin);
 #if 0
 	sensor_msgs::ImagePtr img_msg = cv_bridge::CvImage(std_msgs::Header(), "bgr8", frame).toImageMsg();
@@ -145,15 +147,11 @@ int main(int argc, char *argv[])
 	ros::init(argc, argv, "forecast_age_gender");
 	ros::NodeHandle nh_("~");
 	ros::Time time = ros::Time::now();
-	ros::Rate loop_rate(10);
 
 	nh_.param("/model_detect", model_detect_, std::string("./models/mtcnn_frozen_model.pb"));
 	nh_.param("/model_attribution", model_attribution_, std::string("./models/mtcnn_frozen_model.pb"));
 	nh_.param("/ch_ttf", ch_ttf_, std::string("./output_image/output_image01.jpg"));
-	nh_.param("video_path", video_path_, std::string("test.mp4"));
-	nh_.param("cam", cam_, std::string("right_front"));
 
-	video_path_ = video_path_ + video_sub_;
 
 #if 0
 	image_transport::ImageTransport it(nh_);

@@ -84,9 +84,7 @@ typedef struct sdkFaces {
 } sdkFaces;
 
 
-std::string model_detect_, model_attribution_, ch_ttf_, video_path_, cam_;
-//std::string video_sub_ = "cam/realmonitor?channel=1&subtype=0";
-std::string video_sub_ = "H.265/ch1/main/av_stream";
+std::string model_detect_, model_attribution_, ch_ttf_;
 image_transport::Publisher pub_image_;
 
 ros::Publisher pub_face_pic_message_;
