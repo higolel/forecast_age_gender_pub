@@ -66,6 +66,8 @@ void Face_struct_assignment(face_plate_msgs::Face_pic &face_msg, const face_plat
 	face_msg.vin = msg->vin;
 	face_msg.deviceId = msg->deviceId;
 	face_msg.pictureType = msg->pictureType;
+	face_msg.lon = msg->lon;
+	face_msg.lat = msg->lat;
 	face_msg.sex = msg->sex;
 	face_msg.age = msg->age;
 	face_msg.facialExpression = msg->facialExpression;
